@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>user-generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 650px;
+      margin: 80px auto;
+      padding: 0 20px;
+      color: #111;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #555;
+    }
+
+    a {
+      color: #111;
+    }
+
+    .download {
+      display: inline-block;
+      margin: 18px 0 35px;
+      padding: 10px 16px;
+      border: 1px solid #111;
+      text-decoration: none;
+    }
+
+    .download:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .update {
+      padding: 12px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .update a {
+      text-decoration: none;
+    }
+
+    small {
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>download user-generator</h1>
+  <p>a simple username generator.</p>
+
+  <a class="download" href="./app.py" download="app.py">download app.py</a>
+
+  <h2>github updates + repo</h2>
+  <p>
+    <a href="https://github.com/izzyfrm/user-generator" target="_blank" rel="noopener">
+      github.com/izzyfrm/user-generator
+    </a>
+  </p>
+
+  <div id="updates">loading updates...</div>
+
+  <script>
+    const updates = document.getElementById("updates");
+
+    fetch("https://api.github.com/repos/izzyfrm/user-generator/commits?per_page=5")
+      .then(response => {
+        if (!response.ok) throw new Error("failed");
+        return response.json();
+      })
+      .then(commits => {
+        updates.innerHTML = commits.map(commit => {
+          const message = commit.commit.message.split("\n")[0];
+          const date = new Date(commit.commit.author.date).toLocaleDateString();
+
+          return `
+            <div class="update">
+              <a href="${commit.html_url}" target="_blank" rel="noopener">${message}</a><br>
+              <small>${date}</small>
+            </div>
+          `;
+        }).join("");
+      })
+      .catch(() => {
+        updates.textContent = "couldn't load updates right now.";
+      });
+  </script>
+</body>
+</html>
